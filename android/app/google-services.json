@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "157219186526",
+    "project_id": "lecture-reminder-5a40b",
+    "storage_bucket": "lecture-reminder-5a40b.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:157219186526:android:5f058aa974e1ce9c2e91cf",
+        "android_client_info": {
+          "package_name": "com.example.alhikmah_schedule_student"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDN6UA9KKQdhR-JqDEwFtbrBVvymuMtaT4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
