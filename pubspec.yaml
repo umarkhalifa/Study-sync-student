@@ -49,7 +49,11 @@ dependencies:
   dartz:
   cloud_firestore:
   another_flushbar:
-  shared_preferences: 
+  shared_preferences:
+  firebase_messaging:
+  http:
+  flutter_switch: ^0.3.2
+  intl:
 
 
 dev_dependencies:

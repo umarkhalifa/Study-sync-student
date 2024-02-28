@@ -37,14 +37,14 @@ class _SplashScreenState extends State<SplashScreen> {
     return Container(
       height: MediaQuery.sizeOf(context).height,
       width: MediaQuery.sizeOf(context).width,
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         image: DecorationImage(
-          image: const AssetImage(
+          image: AssetImage(
             "assets/images/background.jpg",
           ),
           fit: BoxFit.cover,
           colorFilter: ColorFilter.mode(
-              const Color(0xff036000).withOpacity(0.4), BlendMode.color),
+              Colors.black38, BlendMode.color),
         ),
       ),
       child: Column(

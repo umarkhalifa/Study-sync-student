@@ -32,6 +32,10 @@ class AuthProvider extends ChangeNotifier {
       data.fold((l) async {
         flushBarService.showFlushError(title: l.name);
       }, (r) {
+        if(r == true){
+          navigatorKey.currentState!.pushNamed('/home');
+          return;
+        }
         navigatorKey.currentState!.pushNamed('/personalInformation');
       });
     } finally {

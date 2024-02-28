@@ -2,6 +2,7 @@ import 'package:alhikmah_schedule_student/config/services/shared_preference_serv
 import 'package:alhikmah_schedule_student/features/authentication/presentation/screens/auth_form.dart';
 import 'package:alhikmah_schedule_student/features/authentication/presentation/screens/onboarding.dart';
 import 'package:alhikmah_schedule_student/features/authentication/presentation/screens/personal_details.dart';
+import 'package:alhikmah_schedule_student/features/bottom_navbar.dart';
 import 'package:alhikmah_schedule_student/features/schedule/presentation/screens/schedule_screen.dart';
 import 'package:alhikmah_schedule_student/locator.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -35,7 +36,7 @@ class _AppWrapperState extends State<AppWrapper> {
                   false) {
                 return const PersonalDetailsScreen();
               }
-              return ScheduleScreen();
+              return const BottomBar();
             }
             else {
               return const AuthForm();

@@ -1,3 +1,6 @@
+import 'dart:developer';
+
+import 'package:alhikmah_schedule_student/config/services/push_notification_service/push_notification_service.dart';
 import 'package:alhikmah_schedule_student/config/services/shared_preference_service/shared_preference_service.dart';
 import 'package:alhikmah_schedule_student/features/authentication/presentation/providers/auth_provider.dart';
 import 'package:alhikmah_schedule_student/features/authentication/presentation/providers/courses_provider.dart';
@@ -7,23 +10,58 @@ import 'package:alhikmah_schedule_student/features/authentication/presentation/s
 import 'package:alhikmah_schedule_student/features/authentication/presentation/screens/register_screen.dart';
 import 'package:alhikmah_schedule_student/features/authentication/presentation/screens/splash_screen.dart';
 import 'package:alhikmah_schedule_student/features/authentication/presentation/screens/wrapper.dart';
+import 'package:alhikmah_schedule_student/features/bottom_navbar.dart';
 import 'package:alhikmah_schedule_student/features/schedule/presentation/screens/schedule_screen.dart';
 import 'package:alhikmah_schedule_student/locator.dart';
-import 'package:alhikmah_schedule_student/utils/notification_service.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import'package:firebase_core/firebase_core.dart';
 import'firebase_options.dart';
-final navigatorKey = GlobalKey<NavigatorState>();
 
+@pragma('vm:entry-point')
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  await Firebase.initializeApp();
+  PushNotificationService().showNotificationOnForeground(message.data);
+  log('Handling a background message ${message.notification?.title}');
+}
+late AndroidNotificationChannel channel;
+late FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
+Future<void> setupFlutterNotifications() async {
+  channel = const AndroidNotificationChannel(
+    'high_importance_channel', // id
+    'High Importance Notifications', // title
+    description:
+    'This channel is used for important notifications.', // description
+    importance: Importance.max,
+  );
+  flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+  await flutterLocalNotificationsPlugin
+      .resolvePlatformSpecificImplementation<
+      AndroidFlutterLocalNotificationsPlugin>()
+      ?.createNotificationChannel(channel);
+  await FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
+    alert: true,
+    badge: true,
+    sound: true,
+
+  );
+}
+
+final navigatorKey = GlobalKey<NavigatorState>();
 void main()async {
   setupLocator();
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options:DefaultFirebaseOptions.currentPlatform,
   );
-  await LocalNotificationService().init();
+  PushNotificationService.initialize();
+  await   setupFlutterNotifications();
+
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+
 
   runApp(const MyApp());
 }
@@ -56,7 +94,7 @@ class MyApp extends StatelessWidget {
           '/login': (context) => const LoginScreen(),
           '/register':(context)=> const RegisterScreen(),
           '/personalInformation':(context)=> const PersonalDetailsScreen(),
-          '/home':(context)=> const ScheduleScreen()
+          '/home':(context)=> const BottomBar()
         },
       ),
     );

@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:developer';
 
 import 'package:alhikmah_schedule_student/soft.dart';
@@ -6,18 +7,26 @@ import 'package:alhikmah_schedule_student/utils/extensions/app_firebase_exceptio
 import 'package:dartz/dartz.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:http/http.dart' as http;
 
 class AuthenticationDataSource {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   final FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
 
   /// Sign In
-  Future<Either<AppFirebaseExceptionType, String>> login(
+  Future<Either<AppFirebaseExceptionType, bool>> login(
       {required String email, required String password}) async {
     try {
-      await FirebaseAuth.instance.signInWithEmailAndPassword(
-          email: 'khalifa@gmail.com', password: 'password');
-      return const Right('User logged in successfully');
+      final user = await FirebaseAuth.instance.signInWithEmailAndPassword(
+          email: email, password: password);
+      final users = await firebaseFirestore.collection("USERS").doc(user.user?.uid).get();
+      if(users.exists){
+        await firebaseFirestore.collection("USERS").doc(user.user?.uid).update({
+          'Token': await FirebaseMessaging.instance.getToken()
+        });
+      }
+      return  Right(users.exists);
     } on FirebaseAuthException catch (error) {
       log(error.message??'');
       return Left(error.appFirebaseExceptionType());
@@ -63,6 +72,7 @@ class AuthenticationDataSource {
     try{
       await firebaseFirestore.collection("USERS").doc(_firebaseAuth.currentUser?.uid).set({
         'Matric No':matric,
+        'Token': await FirebaseMessaging.instance.getToken(),
         'Level':level,
         'Programme':programme,
         'Courses': courses.map((e) => e.id).toList()
@@ -72,6 +82,7 @@ class AuthenticationDataSource {
       return const Left('Error uploading personal Information');
     }
   }
+
 
   Future<Either<String, List<Programme>>> fetchProgrammes()async{
     try{

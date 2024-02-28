@@ -3,6 +3,16 @@ import 'dart:developer';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 
+class Lecture{
+  final Course? course;
+  final String? start;
+  final String? end;
+  final String? venue;
+  final int? day;
+
+  Lecture( {this.course, this.start, this.end, this.venue,this.day});
+}
+
 class Course{
   final String? id;
   final String? department;
@@ -361,4 +371,29 @@ List<Course> computer =[
   Course(id: "CMP 418", department: "Computer Science", code: "CMP 418", title: "Net-Centric Computing"),
   Course(id: "CMP 420", department: "Computer Science", code: "CMP 420", title: "Computer Networks and Communications"),
   Course(id: "CMP 422", department: "Computer Science", code: "CMP 422", title: "Special Topics in Computer Science"),
+];
+List<Course> sen300 =[
+  Course(id: "CMP 331", department: "Computer Science", code: "CMP 331", title: "Operations Research"),
+  Course(id: "SEN 301", department: "Software Engineering", code: "SEN 301", title: "Object-Oriented Analysis and Design"),
+  Course(id: "SEN 303", department: "Software Engineering", code: "SEN 303", title: "Software Testing and Quality Assurance"),
+  Course(id: "SEN 305", department: "Software Engineering", code: "SEN 305", title: "Web Application Development"),
+  Course(id: "SEN 307", department: "Software Engineering", code: "SEN 307", title: "Database Systems"),
+  Course(id: "CMP 317", department: "Computer Science", code: "CMP 317", title: "Research Methodology"),
+  Course(id: "SEN 313", department: "Software Engineering", code: "SEN 313", title: "Engineering Mobile Applications"),
+  Course(id: "SEN 388", department: "Software Engineering", code: "SEN 388", title: "Industrial Training"),
+  Course(id: "GNS 301", department: "General Studies", code: "GNS 301", title: "Environment & Sustainable Development"),
+  Course(id: "GNS 302", department: "General Studies", code: "GNS 302", title: "Leadership Skills, Peace & Conflict Resolution"),
+  Course(id: "GNS 303", department: "General Studies", code: "GNS 303", title: "Entrepreneurship and Skills Development"),
+];
+
+List<Lecture> lectures = [
+  Lecture(course: sen300[0],day: 5,start: '10:AM',end: "11:AM",venue: 'LR 14'),
+  Lecture(course: sen300[1],day: 3,start: '09:AM',end: "10:AM", venue: 'LR 12'),
+  Lecture(course: sen300[1],day: 4,start: '08:AM',end: "10:AM", venue: 'ILab'),
+  Lecture(course: sen300[2],day: 1,start: '10:AM',end: "12:APM", venue: 'LR 19'),
+  Lecture(course: sen300[3],day: 4,start: '16:PM',end: "18:PM", venue: 'ILab'),
+  Lecture(course: sen300[4],day: 2,start: '08:AM',end: "10:AM", venue: 'LR 12'),
+  Lecture(course: sen300[5],day: 3,start: '10:AM',end: "12:PM", venue: 'LR 13'),
+  Lecture(course: sen300[8],day: 2,start: '10:AM',end: "12:PM", venue: 'Auditorium'),
+  Lecture(course: sen300[9],day: 5,start: '10:AM',end: "12:PM", venue: 'Auditorium'),
 ];
