@@ -106,7 +106,7 @@ class ScheduleProvider extends ChangeNotifier {
   }
 
   // Define the sortTimeTable method to sort the time table
-  Future<void> sortTimeTable({bool? includesToday}) async {
+  Future<void> sortTimeTable() async {
     _lectures = await _homeRepo.fetchTimeTale(
         day: selectedDay.weekday, lectures: _timeTable);
   }
@@ -118,7 +118,7 @@ class ScheduleProvider extends ChangeNotifier {
     await fetchUserDetails();
     await fetchTimeTable();
     await setNotifications();
-    await sortTimeTable(includesToday: true);
+    await sortTimeTable();
     _appState = AppState.idle;
     notifyListeners();
   }
