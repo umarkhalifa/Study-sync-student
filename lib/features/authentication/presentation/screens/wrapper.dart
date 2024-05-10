@@ -2,7 +2,6 @@ import 'package:alhikmah_schedule_student/config/services/shared_preference_serv
 import 'package:alhikmah_schedule_student/features/authentication/presentation/screens/auth_form.dart';
 import 'package:alhikmah_schedule_student/features/authentication/presentation/screens/onboarding.dart';
 import 'package:alhikmah_schedule_student/features/authentication/presentation/screens/personal_details.dart';
-import 'package:alhikmah_schedule_student/features/bottom_navbar.dart';
 import 'package:alhikmah_schedule_student/features/schedule/presentation/screens/schedule_screen.dart';
 import 'package:alhikmah_schedule_student/locator.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -18,7 +17,6 @@ class AppWrapper extends StatefulWidget {
 class _AppWrapperState extends State<AppWrapper> {
   @override
   Widget build(BuildContext context) {
-    final user = FirebaseAuth.instance.currentUser;
     return StreamBuilder(
       stream: FirebaseAuth.instance.userChanges(),
       builder: (BuildContext context, AsyncSnapshot<User?> snapshot) {
@@ -26,21 +24,14 @@ class _AppWrapperState extends State<AppWrapper> {
         if (locator<SharedPreferenceProvider>().viewedOnBoarding == false) {
           return const OnBoardingScreen();
         } else {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Text("Loading");
-          }
-          else {
-            if (snapshot.hasData ) {
-              /// Check if user has uploaded profile details
-              if (locator<SharedPreferenceProvider>().completedProfile ==
-                  false) {
-                return const PersonalDetailsScreen();
-              }
-              return const BottomBar();
+          if (snapshot.hasData) {
+            /// Check if user has uploaded profile details
+            if (locator<SharedPreferenceProvider>().completedProfile == false) {
+              return const PersonalDetailsScreen();
             }
-            else {
-              return const AuthForm();
-            }
+            return const ScheduleScreen();
+          } else {
+            return const AuthForm();
           }
         }
       },

@@ -1,14 +1,14 @@
-import 'dart:convert';
+// Importing the 'developer' library from Dart which provides tools for logging, debugging, and profiling.
+
 import 'dart:developer';
 
-import 'package:alhikmah_schedule_student/soft.dart';
+import 'package:alhikmah_schedule_student/features/authentication/domain/model/department.dart';
 import 'package:alhikmah_schedule_student/utils/enum/app_firebase_exception_type.dart';
 import 'package:alhikmah_schedule_student/utils/extensions/app_firebase_exceptions.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:http/http.dart' as http;
 
 class AuthenticationDataSource {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
@@ -18,28 +18,35 @@ class AuthenticationDataSource {
   Future<Either<AppFirebaseExceptionType, bool>> login(
       {required String email, required String password}) async {
     try {
-      final user = await FirebaseAuth.instance.signInWithEmailAndPassword(
-          email: email, password: password);
-      final users = await firebaseFirestore.collection("USERS").doc(user.user?.uid).get();
-      if(users.exists){
-        await firebaseFirestore.collection("USERS").doc(user.user?.uid).update({
-          'Token': await FirebaseMessaging.instance.getToken()
-        });
+      final user = await FirebaseAuth.instance
+          .signInWithEmailAndPassword(email: email, password: password);
+      final users = await firebaseFirestore.collection("USERS").doc(
+          user.user?.uid).get();
+      if (users.exists) {
+        // Update the user's token.
+        await firebaseFirestore
+            .collection("USERS")
+            .doc(user.user?.uid)
+            .update({'Token': await FirebaseMessaging.instance.getToken()});
       }
-      return  Right(users.exists);
+      // Return success.
+      return Right(users.exists);
     } on FirebaseAuthException catch (error) {
-      log(error.message??'');
+      // Handle FirebaseAuth exceptions.
+      log('FirebaseAuthException occurred: ${error.message}');
       return Left(error.appFirebaseExceptionType());
     } catch (error) {
+      // Handle other exceptions.
+      log('Unexpected error occurred during login: $error');
       return const Left(AppFirebaseExceptionType.networkUnavailable);
     }
   }
 
-  /// Register
+  /// Register user
   Future<Either<AppFirebaseExceptionType, String>> register(
       {required String email,
-      required String password,
-      required String name}) async {
+        required String password,
+        required String name}) async {
     try {
       final user = await _firebaseAuth.createUserWithEmailAndPassword(
           email: email, password: password);
@@ -52,10 +59,8 @@ class AuthenticationDataSource {
       return const Left(AppFirebaseExceptionType.networkUnavailable);
     }
   }
-////firebaseFirestore.collection("USERS").doc(user.user?.uid).set({
-//
-//       });
-  ///Forgot Password
+
+  /// Send reset password email
   Future<Either<AppFirebaseExceptionType, String>> forgotPassword(
       {required String email}) async {
     try {
@@ -68,31 +73,39 @@ class AuthenticationDataSource {
     }
   }
 
-  Future<Either<String, String>>uploadPersonalInformation({required String matric,required int level,required String programme,required List<Course> courses})async{
-    try{
-      await firebaseFirestore.collection("USERS").doc(_firebaseAuth.currentUser?.uid).set({
-        'Matric No':matric,
+  /// Upload users, personal information
+  Future<Either<String, String>> uploadPersonalInformation(
+      {required String matric,
+        required int level,
+        required String programme,
+        required List<String> courses}) async {
+    try {
+      await firebaseFirestore
+          .collection("USERS")
+          .doc(_firebaseAuth.currentUser?.uid)
+          .set({
+        'Matric No': matric,
         'Token': await FirebaseMessaging.instance.getToken(),
-        'Level':level,
-        'Programme':programme,
-        'Courses': courses.map((e) => e.id).toList()
+        'Level': level,
+        'Programme': programme,
+        'Courses': courses
       });
       return const Right('Personal Information uploaded successfully');
-    }catch(error){
+    } catch (error) {
       return const Left('Error uploading personal Information');
     }
   }
 
 
-  Future<Either<String, List<Programme>>> fetchProgrammes()async{
-    try{
+  /// Fetch List of Programmes in department with respective courses
+  Future<Either<String, List<Department>>> fetchProgrammes() async {
+    try {
       final data = await firebaseFirestore.collection("PROGRAMMES").get();
-
-      return Right((data.docs).map((e) => Programme.fromMap(e.data())).toList());
-    }catch(error){
-      return const Left('Error fetching programmes');
+      return Right(data.docs.map((e) => Department.fromMap(e.data())).toList());
+    }
+    catch (error) {
+      log(error.toString());
+      return const Left('Error fetching courses');
     }
   }
-
-
 }

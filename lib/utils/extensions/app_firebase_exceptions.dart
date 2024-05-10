@@ -21,15 +21,13 @@ extension FirebaseErrorCode on FirebaseAuthException{
       case 'account-exists-with-different-credential':
         return AppFirebaseExceptionType.accountExists;
       case 'invalid-credential':
-        return AppFirebaseExceptionType.invalidEmail;
+        return AppFirebaseExceptionType.invalidCredentials;
       case 'user-mismatch':
         return AppFirebaseExceptionType.userMisMatch;
       case 'network-request-failed':
         return AppFirebaseExceptionType.networkUnavailable;
       default:
         return AppFirebaseExceptionType.none;
-
-
     }
   }
 }

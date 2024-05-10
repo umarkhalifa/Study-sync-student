@@ -10,14 +10,13 @@ class SharedPreferenceProvider {
     sharedPreferences = await SharedPreferences.getInstance();
     viewedOnBoarding = sharedPreferences?.getBool('onBoarding')??false;
     completedProfile = sharedPreferences?.getBool('completeProfile')??false;
-    print('Complete profile: $completedProfile');
   }
 
   void setOnBoarding(){
     sharedPreferences?.setBool('onBoarding', true);
   }
 
-  void setCompleteProfile(){
-    sharedPreferences?.setBool('completeProfile', true);
+  void setCompleteProfile({bool? value}){
+    sharedPreferences?.setBool('completeProfile',value?? true);
   }
 }

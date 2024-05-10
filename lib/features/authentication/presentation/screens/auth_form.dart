@@ -6,7 +6,6 @@ import 'package:provider/provider.dart';
 
 class AuthForm extends StatelessWidget {
   const AuthForm({super.key});
-
   @override
   Widget build(BuildContext context) {
     final authProvider = Provider.of<AuthProvider>(context);

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 class FlushBarService{
   void showFlushError({required String title}){
+    /// Show error flushBar
     Flushbar(
       backgroundColor: const Color(0XFFB3261E),
       duration: const Duration(seconds: 4),
@@ -21,6 +22,7 @@ class FlushBarService{
   }
 
   Future<void> showFlushSuccess({required String title})async{
+    /// Show success flushBar
     await Flushbar(
       backgroundColor: const Color(0XFF12B76A),
       duration: const Duration(seconds: 4),

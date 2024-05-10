@@ -2,7 +2,6 @@ import 'package:alhikmah_schedule_student/config/shared/button.dart';
 import 'package:alhikmah_schedule_student/config/shared/text_field.dart';
 import 'package:alhikmah_schedule_student/features/authentication/presentation/providers/auth_provider.dart';
 import 'package:alhikmah_schedule_student/features/authentication/presentation/screens/register_screen.dart';
-import 'package:alhikmah_schedule_student/main.dart';
 import 'package:alhikmah_schedule_student/utils/enum/app_state.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -21,7 +20,6 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   void dispose() {
-    // TODO: implement dispose
     super.dispose();
     emailController.dispose();
     passwordController.dispose();
@@ -47,7 +45,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     "Welcome",
                     style: TextStyle(
                         fontSize: 34,
-                        color: Color(0xff036000),
+                        color: Color(0xff46a055),
                         fontWeight: FontWeight.w700),
                   ),
                   const Text(
@@ -130,7 +128,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         child: const Text(
                           " Register",
                           style: TextStyle(
-                            color: Color(0xff036000),
+                            color: Color(0xff46a055),
                           ),
                         ),
                       ),

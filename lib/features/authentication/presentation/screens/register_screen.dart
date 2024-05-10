@@ -31,7 +31,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
   @override
   Widget build(BuildContext context) {
     final authProvider = Provider.of<AuthProvider>(context);
-
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(
@@ -49,7 +48,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     "Hello",
                     style: TextStyle(
                         fontSize: 34,
-                        color: Color(0xff036000),
+                        color: Color(0xff46a055),
                         fontWeight: FontWeight.w700),
                   ),
                   const Text(
@@ -130,14 +129,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       GestureDetector(
                         onTap: () {
                           Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => LoginScreen()));
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const LoginScreen(),
+                            ),
+                          );
                         },
                         child: const Text(
                           " Login",
                           style: TextStyle(
-                            color: Color(0xff036000),
+                            color: Color(0xff46a055),
                           ),
                         ),
                       ),

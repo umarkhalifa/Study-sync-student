@@ -1,123 +1,228 @@
-import 'package:alhikmah_schedule_student/config/services/flushbar_service/flushbarService.dart';
+import 'dart:developer';
+
+import 'package:alhikmah_schedule_student/config/services/flushbar_service/flushbar_service.dart';
+import 'package:alhikmah_schedule_student/config/services/shared_preference_service/shared_preference_service.dart';
 import 'package:alhikmah_schedule_student/features/authentication/data/repository_impl/auth_repository_impl.dart';
+import 'package:alhikmah_schedule_student/features/authentication/domain/model/department.dart';
+import 'package:alhikmah_schedule_student/features/authentication/domain/model/model.dart';
 import 'package:alhikmah_schedule_student/locator.dart';
 import 'package:alhikmah_schedule_student/main.dart';
-import 'package:alhikmah_schedule_student/soft.dart';
 import 'package:alhikmah_schedule_student/utils/enum/app_state.dart';
+import 'package:alhikmah_schedule_student/utils/extensions/auth_exception.dart';
 import 'package:flutter/material.dart';
 
 class AuthProvider extends ChangeNotifier {
+  //<---------------------- SETTERS ---------------------->
   final authRepo = locator<AuthRepositoryImpl>();
   final flushBarService = locator<FlushBarService>();
-  List<Programme> _programmes = [];
-  List<Programme> get programmes => _programmes;
-  Programme? _programme;
-  Programme? get programme => _programme;
-  final List<Course> selectedCourses = [];
+  final _sharedPreferenceService = locator<SharedPreferenceProvider>();
+
+  List<Department> _programmes = [];
+  Department? _programme;
+  final List<Course> _selectedCourses = [];
   int _selectedLevel = 100;
+  AppState _appState = AppState.idle;
+  AuthState _authState = AuthState.register;
+
+  //<---------------------- GETTERS ---------------------->
+  List<Department> get programmes => _programmes;
+
+  Department? get programme => _programme;
+
+  List<Course> get selectedCourses => _selectedCourses;
+
   int get selectedLevel => _selectedLevel;
-  AppState appState = AppState.idle;
-  AuthState authState = AuthState.register;
 
+  AppState get appState => _appState;
+
+  AuthState get authState => _authState;
+
+  //<---------------------- METHODS ---------------------->
+
+  /// Update App's Authentication state i.e Change authentication screen from
+  /// login to register and vice versa
   void updateAuthState(AuthState state) {
-    authState = state;
+    _authState = state;
     notifyListeners();
   }
 
+  /// Login
   Future<void> login({required String email, required String password}) async {
-    appState = AppState.loading;
-    notifyListeners();
     try {
+      // Set the app state to loading.
+      _appState = AppState.loading;
+      notifyListeners();
+
+      // Attempt login.
       final data = await authRepo.login(email: email, password: password);
-      data.fold((l) async {
-        flushBarService.showFlushError(title: l.name);
-      }, (r) {
-        if(r == true){
-          navigatorKey.currentState!.pushNamed('/home');
-          return;
-        }
-        navigatorKey.currentState!.pushNamed('/personalInformation');
-      });
+
+      // Handle the result.
+      data.fold(
+            (error) {
+          // Show error message to the user.
+          flushBarService.showFlushError(title: error.toText());
+        },
+            (result) {
+          if (result) {
+            // Navigate to home page upon successful login.
+            navigatorKey.currentState!.pushNamed('/home');
+          } else {
+            // Navigate to personal information page if users profile does
+            // not exist.
+            navigatorKey.currentState!.pushNamed('/personalInformation');
+          }
+        },
+      );
+    } catch (error) {
+      // Handle unexpected errors.
+      log('An unexpected error occurred: $error');
+      // You may want to show a generic error message to the user here.
     } finally {
-      appState = AppState.idle;
+      // Reset the app state to idle, regardless of success or failure.
+      _appState = AppState.idle;
       notifyListeners();
     }
   }
 
-  Future<void> register(
-      {required String email,
-      required String password,
-      required String name}) async {
-    appState = AppState.loading;
-    notifyListeners();
+  /// Register
+  Future<void> register({
+    required String email,
+    required String password,
+    required String name,
+  }) async {
     try {
-      final data =
-          await authRepo.register(email: email, password: password, name: name);
-      data.fold((l) async {
-        flushBarService.showFlushError(title: l.name);
-      }, (r) {
-        navigatorKey.currentState!.pushNamed('/personalInformation');
-      });
+      // Set the app state to loading.
+      _appState = AppState.loading;
+      notifyListeners();
+
+      // Attempt registration.
+      final data = await authRepo.register(
+        email: email,
+        password: password,
+        name: name,
+      );
+
+      // Handle the result.
+      data.fold(
+            (error) {
+          // Show error message to the user.
+          flushBarService.showFlushError(title: error.toText());
+        },
+            (result) {
+          // Navigate to personal information page upon successful registration.
+          navigatorKey.currentState!.pushNamed('/personalInformation');
+        },
+      );
+    } catch (error) {
+      // Handle unexpected errors.
+      log('An unexpected error occurred: $error');
+      // You may want to show a generic error message to the user here.
     } finally {
-      appState = AppState.idle;
+      // Reset the app state to idle, regardless of success or failure.
+      _appState = AppState.idle;
       notifyListeners();
     }
   }
 
-  Future<void> fetchCourses()async{
-    appState = AppState.completeLoading;
-    notifyListeners();
+  void updateOnBoardingState(){
+    _sharedPreferenceService.setOnBoarding();
+
+  }
+
+
+
+  /// Fetch courses
+  Future<void> fetchCourses() async {
     try {
-      final data =
-      await authRepo.fetchCourses();
-      data.fold((l) async {
-        flushBarService.showFlushError(title: l);
-      }, (r) {
-        _programmes = r;
-      });
+      // Set the app state to loading.
+      _appState = AppState.completeLoading;
       notifyListeners();
 
+      // Fetch courses.
+      final data = await authRepo.fetchCourses();
+
+      // Handle the result.
+      data.fold(
+            (error) {
+          // Show error message to the user.
+          flushBarService.showFlushError(title: error);
+        },
+            (courses) {
+          // Update courses on success.
+          _programmes = courses;
+          // Notify listeners after updating courses.
+          notifyListeners();
+        },
+      );
+    } catch (error) {
+      // Handle unexpected errors.
+      log('An unexpected error occurred: $error');
+      // You may want to show a generic error message to the user here.
     } finally {
-      appState = AppState.idle;
+      // Reset the app state to idle, regardless of success or failure.
+      _appState = AppState.idle;
       notifyListeners();
     }
   }
 
   // Update the users selected programme
-  void selectProgramme(Programme newProgramme) {
+  void selectProgramme(Department newProgramme) {
     _programme = newProgramme;
     notifyListeners();
   }
 
   // Update selected day
-  void updateSelectedLevel(int level){
+  void updateSelectedLevel(int level) {
     _selectedLevel = level;
     notifyListeners();
   }
 
   /// Select and deselect courses
-  void updateSelectedCourse(Course course){
-    if(selectedCourses.contains(course)){
+  void updateSelectedCourse(Course course) {
+    if (selectedCourses.contains(course)) {
+      // If the course is already selected, remove it.
       selectedCourses.remove(course);
-      notifyListeners();
-      return;
+    } else {
+      // If the course is not selected, add it.
+      selectedCourses.add(course);
     }
-    selectedCourses.add(course);
+    // Notify listeners after the list is updated.
     notifyListeners();
   }
 
-  Future<void> uploadPersonalInformation({required String matric})async{
-    try{
-      appState = AppState.loading;
+
+  Future<void> uploadPersonalInformation({required String matric}) async {
+    try {
+      // Set the app state to loading.
+      _appState = AppState.loading;
       notifyListeners();
-      final data = await authRepo.uploadPersonalInformation(matric: matric, level: _selectedLevel, programme: programme?.name??'', courses: selectedCourses);
-      data.fold((l) async {
-        flushBarService.showFlushError(title: l);
-      }, (r) {
-        Navigator.pushReplacementNamed(navigatorKey.currentContext!, '/home');
-      });
-    }finally{
-      appState = AppState.idle;
+
+      // Perform the upload operation.
+      final data = await authRepo.uploadPersonalInformation(
+        matric: matric,
+        level: _selectedLevel,
+        programme: programme?.name ?? '',
+        courses: selectedCourses.map((e) => e.id!).toList(),
+      );
+
+      // Handle the result.
+      data.fold(
+            (error) {
+          // Show error message to the user.
+          flushBarService.showFlushError(title: error);
+        },
+            (result) {
+          // Navigate to the home screen upon successful upload.
+          Navigator.pushReplacementNamed(navigatorKey.currentContext!, '/home');
+        },
+      );
+    } catch (error) {
+      // Handle unexpected errors.
+      log('An unexpected error occurred: $error');
+      // You may want to show a generic error message to the user here.
+    } finally {
+      // Reset the app state to idle, regardless of success or failure.
+      _appState = AppState.idle;
       notifyListeners();
     }
   }

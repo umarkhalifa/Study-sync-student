@@ -23,7 +23,6 @@ class _BottomBarState extends State<BottomBar> {
             backgroundColor: Colors.white,
             onTap: (index){
               currentIndex.value = index;
-              print(index);
             },
             currentIndex: value,
             items: const [
