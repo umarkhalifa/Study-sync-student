@@ -48,9 +48,13 @@ class ScheduleProvider extends ChangeNotifier {
 
   // Define the getters for the lists, selected day, user profile, app state, and show calendar
   List<Lecture> get lectures => _lectures;
+
   DateTime get selectedDay => _selectedDay;
+
   UserProfile? get userProfile => _profile;
+
   AppState get appState => _appState;
+
   bool get showCalendar => _showCalendar;
 
   // Define the updateCalendar method to toggle the show calendar boolean
@@ -72,9 +76,24 @@ class ScheduleProvider extends ChangeNotifier {
   Future<void> fetchUserDetails() async {
     final data = await _homeRepo.fetchUserProfile();
     data.fold(
-          (l) => _flushBarService.showFlushError(title: l),
-          (r) => _profile = r,
+      (l) => _flushBarService.showFlushError(title: l),
+      (r) => _profile = r,
     );
+    notifyListeners();
+  }
+
+  Future<void> refresh() async {
+    await _homeRepo.fetchUserProfile().then(
+          (value) => value.fold((l) => null, (r) => _profile = r),
+        );
+    await _homeRepo
+        .fetchLectures(
+            course: _profile!.programme!, courses: _profile!.courses!)
+        .then(
+          (value) => value.fold((l) => null, (r) => _timeTable = r),
+        );
+    await sortTimeTable();
+    notifyListeners();
   }
 
   // Define the fetchTimeTable method to fetch the time table
@@ -82,9 +101,11 @@ class ScheduleProvider extends ChangeNotifier {
     final data = await _homeRepo.fetchLectures(
         course: _profile!.programme!, courses: _profile!.courses!);
     data.fold(
-          (l) => _flushBarService.showFlushError(title: l),
-          (r) => _timeTable = r,
+      (l) => _flushBarService.showFlushError(title: l),
+      (r) => _timeTable = r,
     );
+    sortTimeTable();
+    notifyListeners();
   }
 
   Future<void> setNotifications() async {
@@ -101,7 +122,6 @@ class ScheduleProvider extends ChangeNotifier {
   void updateSelectedDay(DateTime date) {
     _selectedDay = date;
     sortTimeTable();
-    // myLectures = lectures.where((element) => element.day == date.weekday).toList();
     notifyListeners();
   }
 
@@ -150,4 +170,5 @@ class ScheduleProvider extends ChangeNotifier {
     }
     return null;
   }
+
 }

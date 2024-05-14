@@ -1,9 +1,16 @@
 import 'package:flutter/material.dart';
+
 class DetailColumn extends StatelessWidget {
   final String label;
-  final String content;
+  final bool? enabled;
+  final TextEditingController? controller;
+  final TextInputType? textInputType;
 
-  const DetailColumn({super.key, required this.label, required this.content});
+  const DetailColumn(
+      {super.key,
+        required this.label,
+        this.enabled,
+        this.controller, this.textInputType});
 
   @override
   Widget build(BuildContext context) {
@@ -14,20 +21,31 @@ class DetailColumn extends StatelessWidget {
         const SizedBox(
           height: 10,
         ),
-        Material(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(10),
-          child: SizedBox(
-            height: 60,
-            width: MediaQuery.sizeOf(context).width,
-            child: Padding(
-              padding: const EdgeInsets.all(15.0),
-              child: Row(
-                children: [
-                  Text(content),
-                ],
-              ),
+        TextFormField(
+          controller: controller,
+          keyboardType: textInputType,
+          enabled: enabled,
+          obscuringCharacter: "*",
+          decoration: InputDecoration(
+            enabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.grey.shade400),
+              borderRadius: BorderRadius.circular(10),
             ),
+            disabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.grey.shade200),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderSide: const BorderSide(
+                color: Color(0xff036000),
+              ),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 20,
+              vertical: 15,
+            ),
+            hintStyle: TextStyle(fontSize: 13, color: Colors.grey.shade400),
           ),
         ),
         const SizedBox(

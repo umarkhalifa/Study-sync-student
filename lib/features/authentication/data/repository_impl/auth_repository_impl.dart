@@ -77,4 +77,21 @@ class AuthRepositoryImpl implements AuthenticationRepository {
       return Right(r);
     });
   }
+
+  @override
+  Future<Either<String, String>> updateProfile({String? programme, String? matricNo, int? level,List<String>? courses})async {
+    final data = await _authDataSource.updateProfile(
+        programme: programme, matricNo: matricNo,level: level,courses: courses);
+    return data.fold((l) => Left(l), (r) {
+      return Right(r);
+    });
+  }
+
+  @override
+  Future<Either<String, List<String>>> fetchSubjects() async{
+    final data = await _authDataSource.fetchCourses();
+    return data.fold((l) => Left(l), (r) {
+      return Right(r);
+    });
+  }
 }

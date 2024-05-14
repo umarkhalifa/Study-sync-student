@@ -20,7 +20,12 @@ class UserProfile{
       programme: map['Programme'] as String,
       level: map['Level'] as num,
       matricNo: map['Matric No'] as String,
-      courses: (map['Courses'] as List).map((e) => e.toString()).toList(),
+      courses: (map['Courses'] as List<dynamic>).map((e) => e.toString()).toList(),
     );
+  }
+
+  @override
+  String toString() {
+    return 'UserProfile{programme: $programme, level: $level, matricNo: $matricNo, courses: $courses}';
   }
 }

@@ -93,3 +93,4 @@ class CourseDetailSheet extends StatelessWidget {
     );
   }
 }
+

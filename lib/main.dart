@@ -4,8 +4,11 @@ import 'package:alhikmah_schedule_student/features/authentication/presentation/p
 import 'package:alhikmah_schedule_student/features/authentication/presentation/screens/login.dart';
 import 'package:alhikmah_schedule_student/features/authentication/presentation/screens/personal_details.dart';
 import 'package:alhikmah_schedule_student/features/authentication/presentation/screens/register_screen.dart';
+import 'package:alhikmah_schedule_student/features/authentication/presentation/screens/reset_password.dart';
 import 'package:alhikmah_schedule_student/features/authentication/presentation/screens/splash_screen.dart';
 import 'package:alhikmah_schedule_student/features/authentication/presentation/screens/wrapper.dart';
+import 'package:alhikmah_schedule_student/features/profile/presentation/provider/profile_provider.dart';
+import 'package:alhikmah_schedule_student/features/profile/presentation/screens/profile_courses.dart';
 import 'package:alhikmah_schedule_student/features/profile/presentation/screens/profile_screen.dart';
 import 'package:alhikmah_schedule_student/features/schedule/presentation/providers/schedule_provider.dart';
 import 'package:alhikmah_schedule_student/features/schedule/presentation/screens/schedule_screen.dart';
@@ -83,7 +86,8 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (context) => ScheduleProvider()),
-        ChangeNotifierProvider(create: (context) => AuthProvider())
+        ChangeNotifierProvider(create: (context) => AuthProvider()),
+        ChangeNotifierProvider(create: (context) => ProfileProvider())
       ],
       child: MaterialApp(
         title: 'Alhikmah Schedule Student',
@@ -104,7 +108,9 @@ class MyApp extends StatelessWidget {
           '/register': (context) => const RegisterScreen(),
           '/personalInformation': (context) => const PersonalDetailsScreen(),
           '/home': (context) => const ScheduleScreen(),
-          '/profile':(context)=> const ProfileScreen()
+          '/profile':(context)=> const ProfileScreen(),
+          '/profileCourse':(context)=> const ProfileCourseScreen(),
+          '/forgotPassword':(context)=> const ResetPassword(),
         },
       ),
     );

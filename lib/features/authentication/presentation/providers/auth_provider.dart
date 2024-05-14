@@ -165,6 +165,40 @@ class AuthProvider extends ChangeNotifier {
     }
   }
 
+  // Send reset password Email
+  Future<void> forgotPassword({required String email})async{
+    try {
+      // Set the app state to loading.
+      _appState = AppState.loading;
+      notifyListeners();
+
+      // Attempt registration.
+      final data = await authRepo.resetPassword(email: email);
+
+      // Handle the result.
+      data.fold(
+            (error) {
+          // Show error message to the user.
+          flushBarService.showFlushError(title: error.toText());
+        },
+            (result) {
+              flushBarService.showFlushSuccess(title: result);
+              // Navigate to personal information page upon successful registration.
+          navigatorKey.currentState!.pop();
+        },
+      );
+    } catch (error) {
+      // Handle unexpected errors.
+      log('An unexpected error occurred: $error');
+      // You may want to show a generic error message to the user here.
+    } finally {
+      // Reset the app state to idle, regardless of success or failure.
+      _appState = AppState.idle;
+      notifyListeners();
+    }
+
+  }
+
   // Update the users selected programme
   void selectProgramme(Department newProgramme) {
     _programme = newProgramme;

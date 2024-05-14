@@ -8,6 +8,8 @@ class Lecture {
   final List<LectureOccurrence> occurrences;
   final String? lecturer;
   final String? phoneNumber;
+  final bool? active;
+  final String? canceledDate;
 
   Lecture({
     required this.id,
@@ -17,6 +19,8 @@ class Lecture {
     required this.occurrences,
     this.lecturer,
     this.phoneNumber,
+    this.active,
+    this.canceledDate,
   });
 
   Map<String, dynamic> toMap() {
@@ -25,22 +29,27 @@ class Lecture {
       'code': code,
       'title': title,
       'department': department,
-      'occurrences':occurrences.map((e) => e.toMap()).toList(),
+      'occurrences': occurrences.map((e) => e.toMap()).toList(),
       'lecturer': lecturer,
-      'phoneNumber':phoneNumber
+      'phoneNumber': phoneNumber,
+      'active':true,
+      'canceledDate':null
     };
   }
 
   factory Lecture.fromMap(Map<String, dynamic> map) {
     return Lecture(
-      id: map['id'] as String,
-      code: map['code'] as String,
-      title: map['title'] as String,
-      department: map['department'] as String,
-      occurrences:(map['occurrences'] as List).map((e) => LectureOccurrence.fromMap(e)).toList(),
-      lecturer: map['lecturer']??'',
-      phoneNumber: map['phoneNumber']??''
-    );
+        id: map['id'] as String,
+        code: map['code'] as String,
+        title: map['title'] as String,
+        department: map['department'] as String,
+        occurrences: (map['occurrences'] as List)
+            .map((e) => LectureOccurrence.fromMap(e))
+            .toList(),
+        lecturer: map['lecturer'] ?? '',
+        phoneNumber: map['phoneNumber'] ?? '',
+        active: map['active']??false,
+        canceledDate: map['canceledDate']??'');
   }
 
   @override

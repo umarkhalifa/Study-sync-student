@@ -108,4 +108,34 @@ class AuthenticationDataSource {
       return const Left('Error fetching courses');
     }
   }
+
+  Future<Either<String, List<String>>> fetchCourses() async {
+    try {
+      final data = await firebaseFirestore.collection("CLASSES").get();
+      return Right(data.docs.map((e) => e.id).toList());
+    }
+    catch (error) {
+      log(error.toString());
+      return const Left('Error fetching courses');
+    }
+  }
+
+
+  Future<Either<String, String>> updateProfile(
+      {String? programme, String? matricNo,int? level,List<String>? courses}) async {
+    try {
+      final body = {'Programme': programme, 'Matric No': matricNo, 'Level':level,
+      "Courses":courses
+      };
+      body.removeWhere((key, value) => value == null);
+      await firebaseFirestore
+          .collection("USERS")
+          .doc(_firebaseAuth.currentUser?.uid)
+          .update(body);
+      return const Right('Profile updated successfully');
+    } catch (error) {
+      log(error.toString());
+      return const Left('Error updating Profile');
+    }
+  }
 }

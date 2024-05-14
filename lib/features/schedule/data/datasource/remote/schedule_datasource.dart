@@ -31,7 +31,7 @@ class ScheduleDataSource {
     try {
       // Fetch lectures from Firestore
       final List<Lecture> timeTable = [];
-      final collection = firebaseFirestore.collection("LECTURES");
+      final collection = firebaseFirestore.collection("CLASSES");
       for (var element in courses) {
         final lecture = await collection.doc(element).get();
         timeTable.add(Lecture.fromMap(lecture.data()!));

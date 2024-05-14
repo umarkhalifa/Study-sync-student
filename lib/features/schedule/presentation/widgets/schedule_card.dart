@@ -17,6 +17,7 @@ class ScheduleCard extends StatelessWidget {
   final Lecture? lectureOccurrence;
   final DateTime selectedDay;
 
+
   @override
   Widget build(BuildContext context) {
     return Row(
@@ -73,10 +74,22 @@ class ScheduleCard extends StatelessWidget {
                             Flexible(
                               child: Padding(
                                 padding: const EdgeInsets.all(10),
-
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
+                                    Row(
+                                      children: [
+                                        Text(lectureOccurrence?.id ?? ""),
+                                        const Spacer(),
+                                        lectureCanceled(selectedDay.weekday)
+                                            ? const Text(
+                                          "CANCELED",
+                                          style: TextStyle(
+                                              color: Colors.red),
+                                        )
+                                            : const SizedBox(),
+                                      ],
+                                    ),
                                     const SizedBox(
                                       height: 5,
                                     ),
@@ -123,4 +136,20 @@ class ScheduleCard extends StatelessWidget {
       ],
     );
   }
+  bool lectureCanceled(int day) {
+    /// Check if the lecture weekday and today's weekday matches
+    if (day == DateTime.now().weekday) {
+      /// Check if the lecture is active and a canceled date has been set
+      if (lectureOccurrence?.active == false &&
+          lectureOccurrence?.canceledDate != null) {
+        final canceledDate = DateTime.parse(lectureOccurrence!.canceledDate!);
+        final twelveHoursAfter = canceledDate.add(const Duration(hours: 12));
+        /// If the time is 12 hours before the lecture canceled date display
+        /// that the lecture has been cancele
+        return DateTime.now().isBefore(twelveHoursAfter);
+      }
+    }
+    return false;
+  }
 }
+

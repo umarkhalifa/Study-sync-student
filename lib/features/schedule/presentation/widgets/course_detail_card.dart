@@ -6,11 +6,14 @@ class CourseDetailCard extends StatelessWidget {
   final IconData iconData;
   final String detail;
   final bool? isCall;
+  final bool? classCanceled;
 
   const CourseDetailCard({
     super.key,
     required this.iconData,
-    required this.detail, this.isCall,
+    required this.detail,
+    this.isCall,
+    this.classCanceled,
   });
 
   @override
@@ -23,9 +26,7 @@ class CourseDetailCard extends StatelessWidget {
         color: const Color(0xfff8f9fd),
         borderRadius: BorderRadius.circular(8),
         child: SizedBox(
-          width: MediaQuery
-              .sizeOf(context)
-              .width,
+          width: MediaQuery.sizeOf(context).width,
           child: Padding(
             padding: const EdgeInsets.all(15),
             child: Row(
@@ -37,7 +38,10 @@ class CourseDetailCard extends StatelessWidget {
                   borderRadius: BorderRadius.circular(10),
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: Icon(iconData, size: 18,),
+                    child: Icon(
+                      iconData,
+                      size: 18,
+                    ),
                   ),
                 ),
                 const SizedBox(
@@ -45,22 +49,31 @@ class CourseDetailCard extends StatelessWidget {
                 ),
                 Text(
                   detail,
-                  style: const TextStyle(
-                      fontSize: 14, color: Color(0xff031628)),
+                  style: TextStyle(
+                    fontSize: 14,
+                    color:
+                        classCanceled == true ? Colors.red : const Color(0xff031628),
+                  ),
                 ),
                 const Spacer(),
-                isCall == true ? GestureDetector(
-                  onTap: (){
-                    courseProv.makePhoneCall(detail);
-                  },
-                  child: const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                    child: Text("Call", style: TextStyle(
-                        color: Color(0xff358442),
-                      fontWeight: FontWeight.w600,
-                    ),),
-                  ),
-                ):const SizedBox()
+                isCall == true
+                    ? GestureDetector(
+                        onTap: () {
+                          courseProv.makePhoneCall(detail);
+                        },
+                        child: const Padding(
+                          padding:
+                              EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                          child: Text(
+                            "Call",
+                            style: TextStyle(
+                              color: Color(0xff358442),
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      )
+                    : const SizedBox()
               ],
             ),
           ),
