@@ -171,11 +171,7 @@ class _PersonalDetailsScreenState extends State<PersonalDetailsScreen> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(course.code ?? ''),
-                              Text(
-                                course.title ?? '',
-                                maxLines: 1,
-                              ),
+                              Text(course),
                               const Divider()
                             ],
                           ),

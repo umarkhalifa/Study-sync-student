@@ -1,7 +1,7 @@
 import 'package:alhikmah_schedule_student/features/profile/presentation/provider/profile_provider.dart';
 import 'package:alhikmah_schedule_student/features/schedule/presentation/providers/schedule_provider.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:provider/provider.dart';
 
 class ProfileCourseScreen extends StatefulWidget {
@@ -14,7 +14,6 @@ class ProfileCourseScreen extends StatefulWidget {
 class _ProfileCourseScreenState extends State<ProfileCourseScreen> {
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       Provider.of<ProfileProvider>(context, listen: false).getCourses(
@@ -55,45 +54,48 @@ class _ProfileCourseScreenState extends State<ProfileCourseScreen> {
           )
         ],
       ),
-      body: SafeArea(
-        child: Builder(builder: (context) {
-          if (prov.loading) {
-            return const Center(
-              child: SpinKitRotatingCircle(
-                color: Color(0xff036000),
-              ),
+      body: StreamBuilder(
+        stream: FirebaseFirestore.instance.collection("CLASSES").snapshots(),
+        builder: (BuildContext context,
+            AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return CircularProgressIndicator(
+              color: Colors.green.shade700,
             );
           } else {
-            return ListView.separated(
+            List<String>? courses =
+            snapshot.data?.docs.map((e) => e.id).toList();
+            return GridView.builder(
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 4, mainAxisSpacing: 5, childAspectRatio: 2),
               itemBuilder: (context, index) {
-                final course = prov.courses[index];
-                return GestureDetector(
-                  onTap: () {
-                    prov.updateCourse(course);
-                  },
-                  child: Material(
-                      color: prov.selectedCourses.contains(course)
-                          ? const Color(0xffE3F5E5)
-                          : Colors.transparent,
-                      borderRadius: BorderRadius.circular(5),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 5.0, vertical: 12),
-                        child: Text(course),
-                      )),
-                );
+                return Consumer<ProfileProvider>(
+                    builder: (context, prov, child) {
+                      return GestureDetector(
+                        onTap: ()=> prov.updateCourse(courses?[index]??""),
+                        child: Chip(
+                          label: Text(
+                            courses?[index] ?? "",
+                            style: const TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
+                              color: Color(0xff0e2513),
+                            ),
+                          ),
+                          backgroundColor:
+                          prov.selectedCourses.contains(courses?[index])
+                              ? Colors.green.withOpacity(0.6)
+                              : Colors.white,
+                        ),
+                      );
+                    });
               },
-              separatorBuilder: (_, __) {
-                return const SizedBox(
-                  height: 20,
-                );
-              },
-              itemCount: prov.courses.length,
-              padding: const EdgeInsets.all(20),
+              itemCount: courses?.length ?? 0,
             );
           }
-        }),
+        },
       ),
+
     );
   }
 }

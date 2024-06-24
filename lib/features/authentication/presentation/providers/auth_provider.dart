@@ -19,7 +19,6 @@ class AuthProvider extends ChangeNotifier {
 
   List<Department> _programmes = [];
   Department? _programme;
-  final List<Course> _selectedCourses = [];
   int _selectedLevel = 100;
   AppState _appState = AppState.idle;
   AuthState _authState = AuthState.register;
@@ -29,8 +28,13 @@ class AuthProvider extends ChangeNotifier {
 
   Department? get programme => _programme;
 
-  List<Course> get selectedCourses => _selectedCourses;
+  List<String> _courses = [];
 
+  List<String> get courses => _courses;
+
+  List<String> _selectedCourses = [];
+
+  List<String> get selectedCourses => _selectedCourses;
   int get selectedLevel => _selectedLevel;
 
   AppState get appState => _appState;
@@ -211,18 +215,7 @@ class AuthProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// Select and deselect courses
-  void updateSelectedCourse(Course course) {
-    if (selectedCourses.contains(course)) {
-      // If the course is already selected, remove it.
-      selectedCourses.remove(course);
-    } else {
-      // If the course is not selected, add it.
-      selectedCourses.add(course);
-    }
-    // Notify listeners after the list is updated.
-    notifyListeners();
-  }
+
 
 
   Future<void> uploadPersonalInformation({required String matric}) async {
@@ -236,7 +229,7 @@ class AuthProvider extends ChangeNotifier {
         matric: matric,
         level: _selectedLevel,
         programme: programme?.name ?? '',
-        courses: selectedCourses.map((e) => e.id!).toList(),
+        courses: selectedCourses.toList(),
       );
 
       // Handle the result.
@@ -259,6 +252,15 @@ class AuthProvider extends ChangeNotifier {
       _appState = AppState.idle;
       notifyListeners();
     }
+  }
+
+  void updateCourse(String course) {
+    if (_selectedCourses.contains(course)) {
+      _selectedCourses.remove(course);
+    } else {
+      _selectedCourses.add(course);
+    }
+    notifyListeners();
   }
 }
 

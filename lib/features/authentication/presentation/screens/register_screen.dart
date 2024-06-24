@@ -3,6 +3,7 @@ import 'package:alhikmah_schedule_student/config/shared/text_field.dart';
 import 'package:alhikmah_schedule_student/features/authentication/presentation/providers/auth_provider.dart';
 import 'package:alhikmah_schedule_student/features/authentication/presentation/screens/login.dart';
 import 'package:alhikmah_schedule_student/utils/enum/app_state.dart';
+import 'package:alhikmah_schedule_student/utils/validator/validator.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:solar_icons/solar_icons.dart';
@@ -71,6 +72,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       color: Colors.grey.shade400,
                     ),
                     hint: "Enter your full name",
+                    validator: AppValidator().validateName,
                     controller: nameController,
                   ),
                   const SizedBox(
@@ -82,6 +84,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       color: Colors.grey.shade400,
                     ),
                     hint: "Enter your email address",
+                    validator: AppValidator().validateEmail,
                     controller: emailController,
                     textInputType: TextInputType.emailAddress,
                   ),
@@ -93,6 +96,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       SolarIconsOutline.lock,
                       color: Colors.grey.shade400,
                     ),
+                    validator: AppValidator().validatePassword,
                     hint: "Enter your password",
                     obscureText: true,
                     controller: passwordController,

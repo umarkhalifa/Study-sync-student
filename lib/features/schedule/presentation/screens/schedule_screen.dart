@@ -5,7 +5,6 @@ import 'package:alhikmah_schedule_student/features/schedule/presentation/provide
 import 'package:alhikmah_schedule_student/utils/enum/app_state.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:solar_icons/solar_icons.dart';
@@ -56,13 +55,27 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
                             children: [
                               Row(
                                 children: [
-                                  Text(
+                                  Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
                           "Hello ${FirebaseAuth.instance.currentUser?.displayName},",
-                                    style: const TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.w600,
-                                      color: Colors.white,
-                                    ),
+                                        style: const TextStyle(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.w600,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                      Text(
+                                        "${courseProv.userProfile?.matricNo}",
+                                        style: const TextStyle(
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.w400,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+
+                                    ],
                                   ),
                                   const Spacer(),
                                   GestureDetector(
@@ -87,26 +100,6 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
                               ),
                               const SizedBox(
                                 height: 10,
-                              ),
-                              RichText(
-                                text: TextSpan(
-                                  text: "You Have ",
-                                  style: GoogleFonts.hankenGrotesk(
-                                    fontSize: 26,
-                                    fontWeight: FontWeight.w600,
-                                    color: Colors.white,
-                                  ),
-                                  children: [
-                                    TextSpan(
-                                      text:
-                                          "${courseProv.lectures.length} Classes\n",
-                                      style: const TextStyle(
-                                        color: Color(0xff0e2513),
-                                      ),
-                                    ),
-                                    const TextSpan(text: "Waiting For You Today")
-                                  ],
-                                ),
                               ),
                             ],
                           ),

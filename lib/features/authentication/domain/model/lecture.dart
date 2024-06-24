@@ -38,6 +38,7 @@ class Lecture {
   }
 
   factory Lecture.fromMap(Map<String, dynamic> map) {
+    print(map);
     return Lecture(
         id: map['id'] as String,
         code: map['code'] as String,

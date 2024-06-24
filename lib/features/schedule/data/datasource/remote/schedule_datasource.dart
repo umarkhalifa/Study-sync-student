@@ -10,7 +10,6 @@ class ScheduleDataSource {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   final FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
 
-
   /// Fetch Users Profile Details
   Future<Either<String, UserProfile>> fetchUserDetails() async {
     try {
@@ -31,10 +30,14 @@ class ScheduleDataSource {
     try {
       // Fetch lectures from Firestore
       final List<Lecture> timeTable = [];
-      final collection = firebaseFirestore.collection("CLASSES");
+      final collection = firebaseFirestore.collection("RAIN");
       for (var element in courses) {
         final lecture = await collection.doc(element).get();
-        timeTable.add(Lecture.fromMap(lecture.data()!));
+        if (lecture.data() != null) {
+          timeTable.add(
+            Lecture.fromMap(lecture.data()!),
+          );
+        }
       }
       return Right(timeTable);
     } catch (error) {
